@@ -1,5 +1,6 @@
 import React from "react";
 import Select from 'react-select';
+import { Row, Col, Collapse, Button, Glyphicon, Panel } from 'react-bootstrap';
 import Form from "@rjsf/core";
 import PropTypes from 'prop-types';
 
@@ -17,38 +18,57 @@ class FeatureReports extends React.Component {
         super(props);
 
         this.state = {
-            selectedSchema: undefined
+            selectedSchema: undefined,
+            editReport: false
         };
     }
 
     render() {
-        const { selectedSchema } = this.state;
+        const { selectedSchema, editReport } = this.state;
 
-        return (<div>
-            <div>{this.props.feature.id}</div>
-            <InfoButton glyphicon="info-sign" text="" title="Feature description" body={this.featureToString(this.props.feature)}/>
-            <div id="MODEL_SELECT">
-                <p>Modèles de rapport</p>
-                <Select options={
-                    this.props.schemasByLayers.map(schemaByLayer => {
-                        const option = {
-                            value: schemaByLayer,
-                            label: schemaByLayer.title
-                        };
-                        return option;
+        return (<Panel>
+            <Row>
+                <Col sm={10}>{this.props.feature.id}</Col>
+                <Col sm={1}>
+                    <InfoButton glyphicon="info-sign" text="" title="Feature description" body={this.featureToString(this.props.feature)}/>
+                </Col>
+                <Col sm={1}>
+                    <Button
+                        bsStyle="primary"
+                        onClick={() => this.toggleEditReport(!editReport)}
+                        aria-controls="edit-report"
+                        aria-expanded={editReport}
+                    >
+                        <Glyphicon glyph="pencil"/>
+                    </Button>
+                </Col>
+            </Row>
+            <Collapse in={editReport}>
+                <div id="edit-report">
+                    <div id="model-select">
+                        <p>Modèles de rapport</p>
+                        <Select options={
+                            this.props.schemasByLayers.map(schemaByLayer => {
+                                const option = {
+                                    value: schemaByLayer,
+                                    label: schemaByLayer.title
+                                };
+                                return option;
+                            }
+                            )}
+                        onChange={(e) => {
+                            this.selectSchema(e.value);
+                        }}
+                        />
+                    </div>
+                    {selectedSchema && <Form schema={selectedSchema}
+                        onChange={log("changed")}
+                        onSubmit={log("submitted")}
+                        onError={log("errors")} />
                     }
-                    )}
-                onChange={(e) => {
-                    this.selectSchema(e.value);
-                }}
-                />
-            </div>
-            {selectedSchema && <Form schema={selectedSchema}
-                onChange={log("changed")}
-                onSubmit={log("submitted")}
-                onError={log("errors")} />
-            }
-        </div>);
+                </div>
+            </Collapse>
+        </Panel>);
     }
 
     featureToString(feature) {
@@ -57,6 +77,10 @@ class FeatureReports extends React.Component {
 
     selectSchema(schema) {
         this.setState({selectedSchema: schema});
+    }
+
+    toggleEditReport(toggled) {
+        this.setState({editReport: toggled});
     }
 }
 

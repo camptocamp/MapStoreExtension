@@ -1,5 +1,7 @@
 import {connect} from "react-redux";
 import { name } from '../../../config';
+import React from "react";
+import { Glyphicon } from 'react-bootstrap';
 
 import ExtensionComponent from "../components/Component";
 import { fetchSchemas, loadedSchemas, loadError, displayForm, selectSchema } from "../state/actions";
@@ -36,7 +38,7 @@ export default {
         Toolbar: {
             name: "reportExtension",
             position: 10,
-            text: "Rapport",
+            icon: <Glyphicon glyph="list-alt" />,
             doNotHide: true,
             action: () => {
                 return {

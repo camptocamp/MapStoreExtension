@@ -9,7 +9,7 @@ const Extension = ({ display, schemasByLayers, currentFeatures, fetchSchemas }) 
     return (
         <div>
             {display &&
-        <div id="REPORT_EXTENSION">
+        <div id="report-extension">
             {currentFeatures &&
             currentFeatures.map(feature => {
                 return <FeatureReports feature={feature} schemasByLayers={schemasByLayers}/>;
