@@ -19,12 +19,13 @@ class FeatureReports extends React.Component {
 
         this.state = {
             selectedSchema: undefined,
+            selectedUISchema: undefined,
             editReport: false
         };
     }
 
     render() {
-        const { selectedSchema, editReport } = this.state;
+        const { selectedSchema, selectedUISchema, editReport } = this.state;
 
         return (<Panel>
             <Row>
@@ -51,7 +52,7 @@ class FeatureReports extends React.Component {
                             this.props.schemasByLayers.map(schemaByLayer => {
                                 const option = {
                                     value: schemaByLayer,
-                                    label: schemaByLayer.title
+                                    label: schemaByLayer.name
                                 };
                                 return option;
                             }
@@ -62,6 +63,7 @@ class FeatureReports extends React.Component {
                         />
                     </div>
                     {selectedSchema && <Form schema={selectedSchema}
+                        uiSchema={selectedUISchema}
                         onChange={log("changed")}
                         onSubmit={log("submitted")}
                         onError={log("errors")} />
@@ -76,7 +78,10 @@ class FeatureReports extends React.Component {
     }
 
     selectSchema(schema) {
-        this.setState({selectedSchema: schema});
+        this.setState({
+            selectedSchema: schema.JSONSchema,
+            selectedUISchema: schema.UISchema
+        });
     }
 
     toggleEditReport(toggled) {

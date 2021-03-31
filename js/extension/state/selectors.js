@@ -6,9 +6,10 @@ const schemaSelector = state => state.reportExtension && state.reportExtension.s
 export const schemasByLayersSelector = createSelector(
     schemaSelector,
     currentResponseSelector,
-    (schemas, response) => schemas.filter(schema => {
-        return response ?
-            schema.layer_id === response.layer.id :
-            false;
-    })
+    (schemas) => schemas
+    // schemas.filter(schema => {
+    //     return response ?
+    //         schema.layer_id === response.layer.id :
+    //         false;
+    // })
 );
