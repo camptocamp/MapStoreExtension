@@ -172,7 +172,7 @@
       }
     },
     "plugins": {
-        "mobile": [{
+        "mobile": ["ReportExtension",{
                 "name": "Map",
                 "cfg": {
                     "mapOptions": {
