@@ -12,7 +12,7 @@ import { currentFeatureSelector } from '@mapstore/selectors/mapInfo';
 import '../assets/style.css';
 
 
-export const extensionComponent = connect(state => ({
+export const ReportIdentifyViewer = connect(state => ({
     schemas: state.reportExtension && state.reportExtension.schemas,
     display: state.reportExtension && state.reportExtension.display,
     schemasByLayers: schemasByLayersSelector(state),
@@ -29,7 +29,7 @@ export const extensionComponent = connect(state => ({
 
 export default {
     name,
-    component: extensionComponent,
+    component: ReportIdentifyViewer,
     reducers: {reportExtension},
     epics: {
         fetchSchemasEpic,

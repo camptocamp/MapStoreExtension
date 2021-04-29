@@ -1,7 +1,7 @@
 import { loadedSchemas, loadError } from "./actions";
 import { layersSelector } from 'mapstore2/web/client/selectors/layers';
 import * as MapInfoUtils from 'mapstore2/web/client/utils/MapInfoUtils';
-import { extensionComponent } from '../plugins/Extension.jsx';
+import { ReportIdentifyViewer } from '../plugins/Extension.jsx';
 import { updateNode } from 'mapstore2/web/client/actions/layers';
 import { updateFeatureInfoClickPoint } from "@mapstore/actions/mapInfo";
 import Rx from "rxjs";
@@ -13,7 +13,7 @@ import axios from '@mapstore/libs/ajax';
 
 export const fetchSchemasEpic = (action$) => action$.ofType('FETCH_SCHEMAS').switchMap(() => {
     // set custom viewer to inject extension component into Identify
-    MapInfoUtils.setViewer('reportViewer', extensionComponent);
+    MapInfoUtils.setViewer('reportViewer', ReportIdentifyViewer);
 
     // TODO: remove mocks and use API response
     // return Rx.Observable.of(loadedSchemas(mockSchemas));
