@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import FeatureReports from "./FeatureReports";
 
-const Extension = ({ display, schemasByLayers, currentFeatures, fetchSchemas }) => {
+const Extension = ({ display, schemasByLayers, currentFeatures, fetchSchemas, postReport }) => {
     useEffect(() => {
         fetchSchemas();
     }, []);
@@ -12,7 +12,7 @@ const Extension = ({ display, schemasByLayers, currentFeatures, fetchSchemas }) 
         <div id="report-extension">
             {currentFeatures &&
             currentFeatures.map(feature => {
-                return <FeatureReports feature={feature} schemasByLayers={schemasByLayers}/>;
+                return <FeatureReports feature={feature} schemasByLayers={schemasByLayers} postReport={postReport} />;
             })
             }
         </div>}

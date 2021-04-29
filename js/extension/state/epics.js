@@ -69,4 +69,53 @@ export const displayFormEpic = (action$, store) => action$.ofType('DISPLAY_FORM'
 
 });
 
-export default { fetchSchemasEpic, displayFormEpic };
+const httpReportsProd = axios.create({
+    baseURL: '../mapstore-reports/reports',
+    headers: {
+      'Content-type': 'application/json',
+    },
+  });
+
+
+export const postReportEpic = (action$ ) => action$.ofType('POST_REPORT').switchMap((action) => {
+
+    const data = action.payload.formData;
+    console.log("post report epic, data : ", data);
+
+    // use axios in prod, fetch in dev
+    const postAPI = process.env.NODE_ENV === 'production' ?
+    httpReportsProd.post('', data,)
+        .then(response => response.data) 
+        .then(response => console.log(response))
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        }) :
+    fetch('https://georchestra.mydomain.org/mapstore-reports/reports', {
+      method: 'POST', // or 'PUT',
+      credentials: "include",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+
+    return Rx.Observable.fromPromise(postAPI)
+        .switchMap((response) => {
+            console.log('Posted report: ', response);
+            const responseList = Object.values(response);
+            return Rx.Observable.of(loadedSchemas(responseList));
+        })
+        .catch(e => Rx.Observable.of(loadError(e.message)));
+});
+
+export default { fetchSchemasEpic, displayFormEpic, postReportEpic };
