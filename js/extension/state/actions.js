@@ -39,9 +39,10 @@ export const postReport = (payload) => {
     };
 };
 
-export const getReports = (payload) => {
+export const getReport = (layer_id, feature_id) => {
     return {
         type: 'GET_REPORTS',
-        payload
+        layer_id,
+        feature_id
     };
 };

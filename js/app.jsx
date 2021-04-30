@@ -49,9 +49,9 @@ const appConfig = require('@mapstore/product/appConfig').default;
 const plugins = require('@mapstore/product/plugins').default;
 
 // Import plugin directly in application. Comment the 3 lines below to test the extension live.
-// const extensions = require('./extensions').default;
-// plugins.plugins = { ...plugins.plugins, ...extensions };
-// ConfigUtils.setConfigProp('translationsPath', ['./MapStore2/web/client/translations', './assets/translations']);
+const extensions = require('./extensions').default;
+plugins.plugins = { ...plugins.plugins, ...extensions };
+ConfigUtils.setConfigProp('translationsPath', ['./MapStore2/web/client/translations', './assets/translations']);
 // end of lines to comment
 checkForMissingPlugins(plugins.plugins);
 

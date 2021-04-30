@@ -52,10 +52,6 @@ class FeatureReports extends React.Component {
     }
 
     onSubmit ({formData}, e) {
-        
-        console.log("onSubmit");
-        console.log(e);
-        console.log("Data submitted: ",  formData);
         postReport(formData);
     }
 
