@@ -3,10 +3,19 @@ import Select from 'react-select';
 import { Row, Col, Collapse, Button, Glyphicon, Panel } from 'react-bootstrap';
 import Form from "@rjsf/core";
 import PropTypes from 'prop-types';
+import { postReport } from "../state/actions";
 
 import InfoButton from "@mapstore/components/buttons/InfoButton";
 
 const log = (type) => console.log.bind(console, type);
+
+const defaultSchema = {
+    id: null,
+    name:'',
+    JSONSchema: {},
+    UISchema: {},
+    formData: {feature_id:''}
+}
 
 class FeatureReports extends React.Component {
     static propTypes = {
@@ -18,14 +27,40 @@ class FeatureReports extends React.Component {
         super(props);
 
         this.state = {
-            selectedSchema: undefined,
-            selectedUISchema: undefined,
+            selectedSchema: defaultSchema,
             editReport: false
         };
     }
 
+    featureToString(feature) {
+        return JSON.stringify({feature}, null, "4");
+    }
+
+    schemaOption(schema) {
+        return {label: schema.name, value: schema};
+    }
+
+    selectSchema(schema) {
+        schema.formData ? schema.formData.feature_id = '' : schema.formData = {"feature_id" : ''}
+        this.setState({
+            selectedSchema: schema
+        });
+    }
+
+    toggleEditReport(toggled) {
+        this.setState({editReport: toggled});
+    }
+
+    onSubmit ({formData}, e) {
+        postReport(formData);
+    }
+
+    
+
     render() {
-        const { selectedSchema, selectedUISchema, editReport } = this.state;
+        const { selectedSchema, editReport } = this.state;
+
+        console.log(this.props);
 
         return (<Panel>
             <Row>
@@ -48,45 +83,29 @@ class FeatureReports extends React.Component {
                 <div id="edit-report">
                     <div id="model-select">
                         <p>Modèles de rapport</p>
-                        <Select options={
-                            this.props.schemasByLayers.map(schemaByLayer => {
-                                const option = {
-                                    value: schemaByLayer,
-                                    label: schemaByLayer.name
-                                };
-                                return option;
-                            }
-                            )}
-                        onChange={(e) => {
-                            this.selectSchema(e.value);
-                        }}
+                        <Select 
+                            options={this.props.schemasByLayers.map(schemaByLayer => this.schemaOption(schemaByLayer))}
+                            onChange={(e) => {
+                                this.selectSchema(e.value);
+                            }}
+                            value={this.schemaOption(selectedSchema)}
                         />
                     </div>
-                    {selectedSchema && <Form schema={selectedSchema}
-                        uiSchema={selectedUISchema}
-                        onChange={log("changed")}
-                        onSubmit={log("submitted")}
-                        onError={log("errors")} />
+                    {selectedSchema && 
+                        <Form 
+                            schema={selectedSchema.JSONSchema}
+                            uiSchema={selectedSchema.UISchema}
+                            formData={selectedSchema.formData}
+                            onChange={log("changed")}
+                            onSubmit={this.props.postReport}
+                            onError={log("errors")} 
+                        />
                     }
                 </div>
             </Collapse>
         </Panel>);
     }
 
-    featureToString(feature) {
-        return JSON.stringify({feature}, null, "4");
-    }
-
-    selectSchema(schema) {
-        this.setState({
-            selectedSchema: schema.JSONSchema,
-            selectedUISchema: schema.UISchema
-        });
-    }
-
-    toggleEditReport(toggled) {
-        this.setState({editReport: toggled});
-    }
 }
 
 export default FeatureReports;
