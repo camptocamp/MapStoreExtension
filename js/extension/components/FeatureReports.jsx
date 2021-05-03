@@ -3,6 +3,7 @@ import Select from 'react-select';
 import { Row, Col, Collapse, Button, Glyphicon, Panel } from 'react-bootstrap';
 import Form from "@rjsf/core";
 import PropTypes from 'prop-types';
+import FeatureViewer from './FeatureViewer';
 
 import InfoButton from "@mapstore/components/buttons/InfoButton";
 
@@ -30,7 +31,14 @@ class FeatureReports extends React.Component {
             <Row>
                 <Col sm={10}>{this.props.feature.id}</Col>
                 <Col sm={1}>
-                    <InfoButton glyphicon="info-sign" text="" title="Feature description" body={this.featureToString(this.props.feature)}/>
+                    <InfoButton 
+                        glyphicon="info-sign" 
+                        text="" 
+                        title={"Feature " + this.props.feature.id}
+                        body={
+                            <FeatureViewer feature={this.props.feature}/>
+                        }
+                    />
                 </Col>
                 <Col sm={1}>
                     <Button
