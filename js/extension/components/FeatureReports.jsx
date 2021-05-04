@@ -24,19 +24,35 @@ class FeatureReports extends React.Component {
         };
     }
 
+    selectSchema(schema) {
+        this.setState({selectedSchema: schema});
+    }
+
+    toggleEditReport(toggled) {
+        this.setState({editReport: toggled});
+    }
+
     render() {
         const { selectedSchema, editReport } = this.state;
+        const { properties } = this.props.feature;
+        const feature_id = this.props.feature.id;
 
         return (<Panel>
             <Row>
-                <Col sm={10}>{this.props.feature.id}</Col>
+                <Col sm={10}>{feature_id}</Col>
                 <Col sm={1}>
                     <InfoButton 
                         glyphicon="info-sign" 
                         text="" 
-                        title={"Feature " + this.props.feature.id}
+                        title={"Feature " + feature_id}
                         body={
-                            <FeatureViewer feature={this.props.feature}/>
+                            <ul>
+                                {Object.keys(properties).map((prop, i) => (
+                                    <li>
+                                        <strong>{prop}:</strong> {properties[prop]}
+                                    </li>
+                                ))}
+                            </ul>
                         }
                     />
                 </Col>
@@ -77,18 +93,6 @@ class FeatureReports extends React.Component {
                 </div>
             </Collapse>
         </Panel>);
-    }
-
-    featureToString(feature) {
-        return JSON.stringify({feature}, null, "4");
-    }
-
-    selectSchema(schema) {
-        this.setState({selectedSchema: schema});
-    }
-
-    toggleEditReport(toggled) {
-        this.setState({editReport: toggled});
     }
 }
 
