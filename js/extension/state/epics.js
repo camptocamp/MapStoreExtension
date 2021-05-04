@@ -28,7 +28,6 @@ export const fetchSchemasEpic = (action$) => action$.ofType('FETCH_SCHEMAS').swi
 
     return Rx.Observable.fromPromise(fetchAPI)
         .switchMap((response) => {
-            console.log('Fetched schemas: ', response);
             const responseList = Object.values(response);
             return Rx.Observable.of(loadedSchemas(responseList));
         })
@@ -80,16 +79,11 @@ const httpReportsProd = axios.create({
 export const postReportEpic = (action$ ) => action$.ofType('POST_REPORT').switchMap((action) => {
 
     const data = action.payload.formData;
-    console.log("post report epic, data : ", data);
 
     // use axios in prod, fetch in dev
     const postAPI = process.env.NODE_ENV === 'production' ?
     httpReportsProd.post('', data,)
         .then(response => response.data) 
-        .then(response => console.log(response))
-        .then(data => {
-            console.log('Success:', data);
-        })
         .catch((error) => {
             console.error('Error:', error);
         }) :
@@ -102,16 +96,12 @@ export const postReportEpic = (action$ ) => action$.ofType('POST_REPORT').switch
       body: JSON.stringify(data),
     })
         .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-        })
         .catch((error) => {
             console.error('Error:', error);
         });
 
     return Rx.Observable.fromPromise(postAPI)
         .switchMap((response) => {
-            console.log('Posted report: ', response);
             const responseList = Object.values(response);
             return Rx.Observable.of(loadedSchemas(responseList));
         })

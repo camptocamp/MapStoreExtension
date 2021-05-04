@@ -28,7 +28,8 @@ class FeatureReports extends React.Component {
 
         this.state = {
             selectedSchema: defaultSchema,
-            editReport: false
+            editReport: false,
+            feature_id: props.feature.id
         };
     }
 
@@ -41,7 +42,11 @@ class FeatureReports extends React.Component {
     }
 
     selectSchema(schema) {
-        schema.formData ? schema.formData.feature_id = '' : schema.formData = {"feature_id" : ''}
+        if (schema.formData) {
+            schema.formData.feature_id = this.state.feature_id;
+        } else {
+            schema.formData = {"feature_id" : this.state.feature_id};
+        };
         this.setState({
             selectedSchema: schema
         });
@@ -59,8 +64,6 @@ class FeatureReports extends React.Component {
 
     render() {
         const { selectedSchema, editReport } = this.state;
-
-        console.log(this.props);
 
         return (<Panel>
             <Row>

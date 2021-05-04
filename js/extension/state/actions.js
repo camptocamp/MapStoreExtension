@@ -32,7 +32,6 @@ export const selectSchema = (payload) => {
 };
 
 export const postReport = (payload) => {
-    console.log("post report action")
     return {
         type: 'POST_REPORT',
         payload
