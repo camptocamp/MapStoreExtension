@@ -33,10 +33,6 @@ class FeatureReports extends React.Component {
         };
     }
 
-    featureToString(feature) {
-        return JSON.stringify({feature}, null, "4");
-    }
-
     schemaOption(schema) {
         return {label: schema.name, value: schema};
     }
@@ -56,20 +52,29 @@ class FeatureReports extends React.Component {
         this.setState({editReport: toggled});
     }
 
-    onSubmit ({formData}, e) {
-        postReport(formData);
-    }
-
-    
-
     render() {
         const { selectedSchema, editReport } = this.state;
+        const { properties } = this.props.feature;
+        const feature_id = this.props.feature.id;
 
         return (<Panel>
             <Row>
-                <Col sm={10}>{this.props.feature.id}</Col>
+                <Col sm={10}>{feature_id}</Col>
                 <Col sm={1}>
-                    <InfoButton glyphicon="info-sign" text="" title="Feature description" body={this.featureToString(this.props.feature)}/>
+                    <InfoButton 
+                        glyphicon="info-sign" 
+                        text="" 
+                        title={"Feature " + feature_id}
+                        body={
+                            <ul>
+                                {Object.keys(properties).map((prop, i) => (
+                                    <li>
+                                        <strong>{prop}:</strong> {properties[prop]}
+                                    </li>
+                                ))}
+                            </ul>
+                        }
+                    />
                 </Col>
                 <Col sm={1}>
                     <Button
@@ -87,7 +92,8 @@ class FeatureReports extends React.Component {
                     <div id="model-select">
                         <p>Modèles de rapport</p>
                         <Select 
-                            options={this.props.schemasByLayers.map(schemaByLayer => this.schemaOption(schemaByLayer))}
+                            options={this.props.schemasByLayers.map(schemaByLayer => this.
+                                     (schemaByLayer))}
                             onChange={(e) => {
                                 this.selectSchema(e.value);
                             }}
@@ -108,7 +114,6 @@ class FeatureReports extends React.Component {
             </Collapse>
         </Panel>);
     }
-
 }
 
 export default FeatureReports;
