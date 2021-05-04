@@ -30,3 +30,18 @@ export const selectSchema = (payload) => {
         payload
     };
 };
+
+export const postReport = (payload) => {
+    return {
+        type: 'POST_REPORT',
+        payload
+    };
+};
+
+export const getReport = (layer_id, feature_id) => {
+    return {
+        type: 'GET_REPORTS',
+        layer_id,
+        feature_id
+    };
+};

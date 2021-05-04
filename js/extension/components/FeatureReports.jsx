@@ -3,10 +3,19 @@ import Select from 'react-select';
 import { Row, Col, Collapse, Button, Glyphicon, Panel } from 'react-bootstrap';
 import Form from "@rjsf/core";
 import PropTypes from 'prop-types';
+import { postReport } from "../state/actions";
 
 import InfoButton from "@mapstore/components/buttons/InfoButton";
 
 const log = (type) => console.log.bind(console, type);
+
+const defaultSchema = {
+    id: null,
+    name:'',
+    JSONSchema: {},
+    UISchema: {},
+    formData: {feature_id:''}
+}
 
 class FeatureReports extends React.Component {
     static propTypes = {
@@ -18,13 +27,25 @@ class FeatureReports extends React.Component {
         super(props);
 
         this.state = {
-            selectedSchema: undefined,
-            editReport: false
+            selectedSchema: defaultSchema,
+            editReport: false,
+            feature_id: props.feature.id
         };
     }
 
+    schemaOption(schema) {
+        return {label: schema.name, value: schema};
+    }
+
     selectSchema(schema) {
-        this.setState({selectedSchema: schema});
+        if (schema.formData) {
+            schema.formData.feature_id = this.state.feature_id;
+        } else {
+            schema.formData = {"feature_id" : this.state.feature_id};
+        };
+        this.setState({
+            selectedSchema: schema
+        });
     }
 
     toggleEditReport(toggled) {
@@ -70,24 +91,23 @@ class FeatureReports extends React.Component {
                 <div id="edit-report">
                     <div id="model-select">
                         <p>Modèles de rapport</p>
-                        <Select options={
-                            this.props.schemasByLayers.map(schemaByLayer => {
-                                const option = {
-                                    value: schemaByLayer,
-                                    label: schemaByLayer.title
-                                };
-                                return option;
-                            }
-                            )}
-                        onChange={(e) => {
-                            this.selectSchema(e.value);
-                        }}
+                        <Select 
+                            options={this.props.schemasByLayers.map(schemaByLayer => this.schemaOption(schemaByLayer))}
+                            onChange={(e) => {
+                                this.selectSchema(e.value);
+                            }}
+                            value={this.schemaOption(selectedSchema)}
                         />
                     </div>
-                    {selectedSchema && <Form schema={selectedSchema}
-                        onChange={log("changed")}
-                        onSubmit={log("submitted")}
-                        onError={log("errors")} />
+                    {selectedSchema && 
+                        <Form 
+                            schema={selectedSchema.JSONSchema}
+                            uiSchema={selectedSchema.UISchema}
+                            formData={selectedSchema.formData}
+                            onChange={log("changed")}
+                            onSubmit={this.props.postReport}
+                            onError={log("errors")} 
+                        />
                     }
                 </div>
             </Collapse>
