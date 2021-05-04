@@ -3,7 +3,6 @@ import Select from 'react-select';
 import { Row, Col, Collapse, Button, Glyphicon, Panel } from 'react-bootstrap';
 import Form from "@rjsf/core";
 import PropTypes from 'prop-types';
-import FeatureViewer from './FeatureViewer';
 
 import InfoButton from "@mapstore/components/buttons/InfoButton";
 
