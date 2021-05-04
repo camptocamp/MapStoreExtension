@@ -1,13 +1,11 @@
-import React from "react";
-import Select from "react-select";
-import { Row, Col, Collapse, Button, Glyphicon, Panel } from "react-bootstrap";
+import InfoButton from "@mapstore/components/buttons/InfoButton";
 import Form from "@rjsf/core";
 import PropTypes from "prop-types";
-import { postReport } from "../state/actions";
-import Rx from "rxjs";
+import React from "react";
+import { Button, Col, Collapse, Glyphicon, Panel, Row } from "react-bootstrap";
+import Select from "react-select";
+import { reportService } from "../plugins/reportService";
 
-import InfoButton from "@mapstore/components/buttons/InfoButton";
-import { mockReports } from "../plugins/mockReports";
 
 const log = (type) => console.log.bind(console, type);
 
@@ -27,8 +25,6 @@ class FeatureReports extends React.Component {
 
     constructor(props) {
         super(props);
-
-        this.reports$ = Rx.Observable.of(mockReports);
 
         this.state = {
             selectedSchema: defaultSchema,
@@ -58,13 +54,13 @@ class FeatureReports extends React.Component {
     }
 
     componentDidMount() {
-        this.subscription = this.reports$.subscribe((reports) =>
-            this.setState({ reports })
-        );
+        this.subscription = reportService
+            .getReports(this.props.feature.id)
+            .subscribe((reports) => this.setState({ reports }));
     }
 
     componentWillUnmount() {
-        this.subscription.unsubscribe();
+        this.subscription?.unsubscribe();
     }
 
     render() {

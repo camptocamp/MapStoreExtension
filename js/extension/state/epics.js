@@ -6,9 +6,10 @@ import { updateNode } from 'mapstore2/web/client/actions/layers';
 import { updateFeatureInfoClickPoint } from "@mapstore/actions/mapInfo";
 import Rx from "rxjs";
 
-// import { mockSchemas } from "../plugins/mockSchemas";
+import { mockSchemas } from "../plugins/mockSchemas";
 import '../assets/style.css';
 import axios from '@mapstore/libs/ajax';
+import { mockReports } from "../plugins/mockReports";
 
 
 export const fetchSchemasEpic = (action$) => action$.ofType('FETCH_SCHEMAS').switchMap(() => {
@@ -16,7 +17,7 @@ export const fetchSchemasEpic = (action$) => action$.ofType('FETCH_SCHEMAS').swi
     MapInfoUtils.setViewer('reportViewer', ReportIdentifyViewer);
 
     // TODO: remove mocks and use API response
-    // return Rx.Observable.of(loadedSchemas(mockSchemas));
+    return Rx.Observable.of(loadedSchemas(mockSchemas));
 
     // use axios in prod, fetch in dev
     // TODO: replace 'reports' API (used to test ping) by 'schemas' API once it exists
