@@ -64,7 +64,6 @@ class FeatureReports extends React.Component {
 
     render() {
         const { selectedSchema, editReport, reports } = this.state;
-        const { properties } = this.props.feature;
         const feature_id = this.props.feature.id;
 
         const reportsByModel = this.props.schemasByLayers.reduce(
@@ -89,16 +88,7 @@ class FeatureReports extends React.Component {
                             glyphicon="info-sign"
                             text=""
                             title={"Feature " + feature_id}
-                            body={
-                                <ul>
-                                    {Object.keys(properties).map((prop, i) => (
-                                        <li>
-                                            <strong>{prop}:</strong>{" "}
-                                            {properties[prop]}
-                                        </li>
-                                    ))}
-                                </ul>
-                            }
+                            body={ this.renderFeaturePropertiesList() }
                         />
                     </Col>
                     <Col sm={1}>
@@ -147,6 +137,19 @@ class FeatureReports extends React.Component {
         );
     }
 
+    renderFeaturePropertiesList() {
+        const { properties } = this.props.feature;
+        return (
+            <ul>
+                {Object.keys(properties).map((prop, i) => (
+                    <li>
+                        <strong>{prop}:</strong> {properties[prop]}
+                    </li>
+                ))}
+            </ul>
+        );
+    }
+
     renderReportsList(reports) {
         return reports.map((r) => (
             <li key={r.id}>{this.formatDate(r.created_at)}</li>
@@ -154,7 +157,7 @@ class FeatureReports extends React.Component {
     }
 
     formatDate(str) {
-        return new Intl.DateTimeFormat('fr-FR').format(new Date(str))
+        return new Intl.DateTimeFormat("fr-FR").format(new Date(str));
     }
 }
 
