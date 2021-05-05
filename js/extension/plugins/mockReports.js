@@ -2,7 +2,7 @@ export const mockReports = [
     {
         "id": "id1",
         "feature_id": "fid1",
-        "report_model_id": "model1",
+        "report_model_id": "12345678-1234-5678-1234-567812345678",
         "created_at": "2021-01-22T13:33:00+00:00",
         "updated_by": "foo",
         "created_by": "foo",
@@ -12,7 +12,7 @@ export const mockReports = [
     {
         "id": "id2",
         "feature_id": "fid2",
-        "report_model_id": "model2",
+        "report_model_id": "12345678-1234-5678-1234-567812345679",
         "created_at": "2021-02-15T13:33:00+00:00",
         "updated_by": "bar",
         "created_by": "bar",
