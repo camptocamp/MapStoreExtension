@@ -6,7 +6,6 @@ import { Button, Col, Collapse, Glyphicon, Panel, Row } from "react-bootstrap";
 import Select from "react-select";
 import { reportService } from "../plugins/reportService";
 
-
 const log = (type) => console.log.bind(console, type);
 
 const defaultSchema = {
@@ -68,6 +67,19 @@ class FeatureReports extends React.Component {
         const { properties } = this.props.feature;
         const feature_id = this.props.feature.id;
 
+        const reportsByModel = this.props.schemasByLayers.reduce(
+            (map, schema) => {
+                const filtered = reports.filter(
+                    (r) => r.report_model_id === schema.id
+                );
+                if (filtered.length > 0) {
+                    map[schema.name] = filtered;
+                }
+                return map;
+            },
+            {}
+        );
+
         return (
             <Panel>
                 <Row>
@@ -127,13 +139,22 @@ class FeatureReports extends React.Component {
                         )}
                     </div>
                 </Collapse>
-                <ul>
-                    {reports.map((r) => (
-                        <li>{r.id}</li>
-                    ))}
-                </ul>
+                {Object.keys(reportsByModel).map((report) => [
+                    <h5>{report}</h5>,
+                    <ul>{this.renderReportsList(reportsByModel[report])}</ul>,
+                ])}
             </Panel>
         );
+    }
+
+    renderReportsList(reports) {
+        return reports.map((r) => (
+            <li key={r.id}>{this.formatDate(r.created_at)}</li>
+        ));
+    }
+
+    formatDate(str) {
+        return new Intl.DateTimeFormat('fr-FR').format(new Date(str))
     }
 }
 
