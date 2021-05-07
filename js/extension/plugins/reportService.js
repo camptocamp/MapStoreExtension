@@ -33,8 +33,7 @@ function request(url, options) {
     if (process.env.NODE_ENV === "production") {
         const endpoint = `../mapstore-reports${url}`;
         fetchAPI = options.data
-            ? axios.get(endpoint)
-            : axios
+            ? axios
                   .create({
                       baseURL: endpoint,
                       headers: {
@@ -44,7 +43,8 @@ function request(url, options) {
                   .post("", options.data)
                   .catch((error) => {
                       console.error("Error:", error);
-                  });
+                  })
+            : axios.get(endpoint);
         fetchAPI = fetchAPI.then((response) => response.data);
     } else {
         const fetchOptions = options.data
