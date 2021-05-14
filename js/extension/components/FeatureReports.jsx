@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { Button, Col, Collapse, Glyphicon, Panel, Row } from "react-bootstrap";
 import Select from "react-select";
-import { reportService } from "../plugins/reportService";
+import { reportService, filterData } from "../plugins/reportService";
 
 const log = (type) => console.log.bind(console, type);
 
@@ -52,6 +52,19 @@ class FeatureReports extends React.Component {
         this.setState({ editReport: toggled });
     }
 
+    showReport(report) {
+        this.setState({
+            editReport: true,
+            feature_id: report.feature_id,
+            selectedSchema: {
+                ...this.props.schemasByLayers.filter(
+                    (s) => s.id === report.report_model_id
+                )[0],
+                formData: filterData(report),
+            },
+        });
+    }
+
     componentDidMount() {
         this.subscription = reportService
             .getReports(this.props.feature.id)
@@ -88,7 +101,7 @@ class FeatureReports extends React.Component {
                             glyphicon="info-sign"
                             text=""
                             title={"Feature " + feature_id}
-                            body={ this.renderFeaturePropertiesList() }
+                            body={this.renderFeaturePropertiesList()}
                         />
                     </Col>
                     <Col sm={1}>
@@ -152,7 +165,11 @@ class FeatureReports extends React.Component {
 
     renderReportsList(reports) {
         return reports.map((r) => (
-            <li key={r.id}>{this.formatDate(r.created_at)}</li>
+            <li key={r.id}>
+                <button class="btn btn-link" onClick={() => this.showReport(r)}>
+                    {this.formatDate(r.created_at)}
+                </button>
+            </li>
         ));
     }
 
