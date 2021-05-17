@@ -12,3 +12,6 @@
 #model-select {
     margin-bottom: 10px;;
 }
+.file-upload [class$=-info] {
+  display: none;
+}

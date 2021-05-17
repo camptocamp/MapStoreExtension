@@ -5,6 +5,7 @@ import React from "react";
 import { Button, Col, Collapse, Glyphicon, Panel, Row } from "react-bootstrap";
 import Select from "react-select";
 import { reportService, filterData } from "../plugins/reportService";
+import { fieldTemplate } from "../plugins/formFieldTemplate";
 
 const log = (type) => console.log.bind(console, type);
 
@@ -138,6 +139,7 @@ class FeatureReports extends React.Component {
                                 onChange={log("changed")}
                                 onSubmit={this.props.postReport}
                                 onError={log("errors")}
+                                FieldTemplate={fieldTemplate}
                             />
                         )}
                     </div>
