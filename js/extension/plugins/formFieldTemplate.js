@@ -25,7 +25,7 @@ export const fieldTemplate = function (props) {
                 {label}
                 {required ? "*" : null}
             </label>
-            {fileUpload && (
+            {fileUpload && formData && (
                 <div>
                     <a
                         href={formData}

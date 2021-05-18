@@ -47,18 +47,17 @@ function request(url, options) {
             : axios.get(endpoint);
         fetchAPI = fetchAPI.then((response) => response.data);
     } else {
-        const fetchOptions = options.data
+        const fetchOptions = options.formData
             ? {
                   method: "POST", // or 'PUT',
-                  credentials: "include",
                   headers: {
                       "Content-Type": "application/json",
                   },
-                  body: JSON.stringify(data),
+                  body: JSON.stringify(options.formData),
               }
             : {};
         fetchAPI = fetch(
-            `https://georchestra.mydomain.org/mapstore-reports${url}`,
+            `http://localhost:8080${url}`,
             fetchOptions
         ).then((response) => response.json());
     }
@@ -69,7 +68,7 @@ function request(url, options) {
 export const reportService = {
     getReports: (featureId) => request(REPORTS),
     getSchemas: () => request(SCHEMAS),
-    postReport: (data) => request(REPORTS, { data }),
+    postReport: (formData) => request(REPORTS, {formData}),
 };
 
 export const filterData = (report) => {
