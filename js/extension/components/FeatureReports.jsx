@@ -26,11 +26,18 @@ class FeatureReports extends React.Component {
     constructor(props) {
         super(props);
 
+        this.postReport = this.postReport.bind(this);
+
+        const layer_id = (props.schemasByLayers && props.schemasByLayers.length != 0 && props.schemasByLayers[0].layer_id) ?
+            props.schemasByLayers[0].layer_id:
+            undefined;
+
         this.state = {
             selectedSchema: defaultSchema,
             editReport: false,
             feature_id: props.feature.id,
             reports: [],
+            layer_id: layer_id
         };
     }
 
@@ -68,8 +75,23 @@ class FeatureReports extends React.Component {
 
     componentDidMount() {
         this.subscription = reportService
-            .getReports(this.props.feature.id)
-            .subscribe((reports) => this.setState({ reports }));
+            .getReports(this.state.feature_id, this.state.layer_id)
+            .subscribe((reports) => 
+                {
+                    let reports_parsed = reports;
+                    if (! new URLSearchParams(window.location.search).has("usemocks")) { 
+                        reports_parsed = reports.map((report) => JSON.parse(report));
+                    } 
+                    this.setState({ reports : reports_parsed })
+                });
+    }
+
+    postReport(payload) {
+        this.props.postReport(payload);
+        this.setState({
+            editReport: false,
+        });
+        this.componentDidMount();
     }
 
     componentWillUnmount() {
@@ -137,7 +159,7 @@ class FeatureReports extends React.Component {
                                 uiSchema={selectedSchema.UISchema}
                                 formData={selectedSchema.formData}
                                 onChange={log("changed")}
-                                onSubmit={this.props.postReport}
+                                onSubmit={this.postReport}
                                 onError={log("errors")}
                                 FieldTemplate={fieldTemplate}
                             />
@@ -166,6 +188,7 @@ class FeatureReports extends React.Component {
     }
 
     renderReportsList(reports) {
+        console.log(reports);
         return reports.map((r) => (
             <li key={r.id}>
                 <button class="btn btn-link" onClick={() => this.showReport(r)}>

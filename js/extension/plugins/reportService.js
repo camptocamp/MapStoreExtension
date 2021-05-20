@@ -47,17 +47,27 @@ function request(url, options) {
             : axios.get(endpoint);
         fetchAPI = fetchAPI.then((response) => response.data);
     } else {
-        const fetchOptions = options.formData
-            ? {
-                  method: "POST", // or 'PUT',
-                  headers: {
-                      "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify(options.formData),
-              }
-            : {};
+        let fetchOptions = {};
+        let fullurl = new URL(`http://localhost:8080${url}`);
+
+        if (options.formData) {
+            fetchOptions = {
+                method: "POST", // or 'PUT',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(options.formData),
+            }
+        }
+        if (options.layerId && options.featureId) {
+            fullurl.searchParams.append("feature_id", options.featureId);
+            fullurl.searchParams.append("layer_id", options.layerId);
+            fetchOptions = {
+                method: "GET"
+            }
+        }
         fetchAPI = fetch(
-            `http://localhost:8080${url}`,
+            fullurl,
             fetchOptions
         ).then((response) => response.json());
     }
@@ -66,7 +76,7 @@ function request(url, options) {
 }
 
 export const reportService = {
-    getReports: (featureId) => request(REPORTS),
+    getReports: (featureId, layerId) => request(REPORTS, {featureId, layerId}),
     getSchemas: () => request(SCHEMAS),
     postReport: (formData) => request(REPORTS, {formData}),
 };
