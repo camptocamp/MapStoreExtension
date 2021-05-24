@@ -6,7 +6,6 @@ const schemaSelector = state => state.reportExtension && state.reportExtension.s
 export const schemasByLayersSelector = state => {
     const reportSchemas = schemaSelector(state);
     const currentResponse = currentResponseSelector(state);
-    const layer_id = currentResponse && currentResponse.layer && currentResponse.layer.id;
-    return reportSchemas;
-    //return (reportSchemas.filter( schema => schema.layer_id === layer_id))
+    const layer_id = currentResponse && currentResponse.layer && currentResponse.layer.name;
+    return (reportSchemas.filter( schema => schema.layer_id === layer_id));
 };

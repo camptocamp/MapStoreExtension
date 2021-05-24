@@ -14,6 +14,7 @@ MOCKS[REPORTS + "-post"] = {};
 
 function request(url, options) {
     options = options || {};
+
     // Use mock if asked in query params
     if (new URLSearchParams(window.location.search).has("usemocks")) {
         return Rx.Observable.of(
@@ -32,19 +33,29 @@ function request(url, options) {
     let fetchAPI;
     if (process.env.NODE_ENV === "production") {
         const endpoint = `../mapstore-reports${url}`;
-        fetchAPI = options.data
-            ? axios
-                  .create({
-                      baseURL: endpoint,
-                      headers: {
-                          "Content-type": "application/json",
-                      },
-                  })
-                  .post("", options.data)
-                  .catch((error) => {
-                      console.error("Error:", error);
-                  })
-            : axios.get(endpoint);
+
+        let params = {};
+        if (options.layerId && options.featureId) {
+            params = {
+                "feature_id": options.featureId,
+                "layer_id": options.layerId,
+            };
+        }
+
+        fetchAPI = options.formData ?
+            axios
+                .create({
+                    baseURL: endpoint,
+                    headers: {
+                        "Content-type": "application/json",
+                    },
+                })
+                .post("", options.formData)
+                .catch((error) => {
+                    console.error("Error:", error);
+                })
+            : axios.get(endpoint, {params});
+
         fetchAPI = fetchAPI.then((response) => response.data);
     } else {
         let fetchOptions = {};
@@ -76,9 +87,9 @@ function request(url, options) {
 }
 
 export const reportService = {
-    getReports: (featureId, layerId) => request(REPORTS, {featureId, layerId}),
+    getReports: (featureId, layerId) => request(REPORTS, {getreports : true, featureId, layerId}),
     getSchemas: () => request(SCHEMAS),
-    postReport: (formData) => request(REPORTS, {formData}),
+    postReport: (formData) => request(REPORTS, {postreport : true, formData}),
 };
 
 export const filterData = (report) => {

@@ -27,19 +27,53 @@ class FeatureReports extends React.Component {
         super(props);
 
         this.postReport = this.postReport.bind(this);
-
-        const layer_id = (props.schemasByLayers && props.schemasByLayers.length != 0 && props.schemasByLayers[0].layer_id) ?
-            props.schemasByLayers[0].layer_id:
-            undefined;
+        this.updateState = this.updateState.bind(this);
+        
 
         this.state = {
             selectedSchema: defaultSchema,
             editReport: false,
             feature_id: props.feature.id,
             reports: [],
-            layer_id: layer_id
+            layer_id: ""
         };
     }
+
+    componentDidMount() {
+        this.updateState();
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props.feature.id !== prevProps.feature.id) {
+            this.updateState();
+        }
+        if (this.state.layer_id !== prevState.layer_id) {
+            this.getReports();
+        }
+    } 
+      
+    updateState() {
+        const layer_id = (this.props.schemasByLayers && this.props.schemasByLayers.length != 0 && this.props.schemasByLayers[0].layer_id) ?
+            this.props.schemasByLayers[0].layer_id:
+            undefined;
+
+        this.setState({feature_id: this.props.feature.id, layer_id : layer_id}); 
+    }
+
+    getReports() {
+        this.subscription = reportService
+            .getReports(this.state.feature_id, this.state.layer_id)
+            .subscribe((reports) => 
+                {
+                    let reports_parsed = reports;
+                    if (! new URLSearchParams(window.location.search).has("usemocks")) { 
+                        reports_parsed = reports.map((report) => JSON.parse(report));
+                    } 
+                    this.setState({ reports : reports_parsed })
+                }); 
+    }
+      
+
 
     schemaOption(schema) {
         return { label: schema.name, value: schema };
@@ -73,25 +107,15 @@ class FeatureReports extends React.Component {
         });
     }
 
-    componentDidMount() {
-        this.subscription = reportService
-            .getReports(this.state.feature_id, this.state.layer_id)
-            .subscribe((reports) => 
-                {
-                    let reports_parsed = reports;
-                    if (! new URLSearchParams(window.location.search).has("usemocks")) { 
-                        reports_parsed = reports.map((report) => JSON.parse(report));
-                    } 
-                    this.setState({ reports : reports_parsed })
-                });
-    }
-
     postReport(payload) {
-        this.props.postReport(payload);
-        this.setState({
-            editReport: false,
-        });
-        this.componentDidMount();
+        this.setState({ editReport: false });
+
+        this.subscription = reportService
+            .postReport(payload.formData)
+            .subscribe(() => 
+                {
+                    this.getReports();
+                });
     }
 
     componentWillUnmount() {
@@ -188,7 +212,6 @@ class FeatureReports extends React.Component {
     }
 
     renderReportsList(reports) {
-        console.log(reports);
         return reports.map((r) => (
             <li key={r.id}>
                 <button class="btn btn-link" onClick={() => this.showReport(r)}>
