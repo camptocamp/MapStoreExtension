@@ -1,5 +1,4 @@
 import { currentResponseSelector } from '@mapstore/selectors/mapInfo';
-import { createSelector } from "reselect";
 
 const schemaSelector = state => state.reportExtension && state.reportExtension.schemas || [];
 

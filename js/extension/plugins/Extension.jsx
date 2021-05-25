@@ -4,9 +4,9 @@ import React from "react";
 import { Glyphicon } from 'react-bootstrap';
 
 import ExtensionComponent from "../components/Component";
-import { fetchSchemas, loadedSchemas, loadError, displayForm, selectSchema, postReport } from "../state/actions";
+import { fetchSchemas, loadedSchemas, loadError, displayForm } from "../state/actions";
 import reportExtension from "../state/reducers";
-import {fetchSchemasEpic, displayFormEpic, postReportEpic} from '../state/epics';
+import {fetchSchemasEpic, displayFormEpic} from '../state/epics';
 import { schemasByLayersSelector } from "../state/selectors";
 import { currentFeatureSelector } from '@mapstore/selectors/mapInfo';
 import '../assets/style.css';
@@ -22,9 +22,7 @@ export const ReportIdentifyViewer = connect(state => ({
     fetchSchemas,
     loadedSchemas,
     loadError,
-    displayForm,
-    selectSchema,
-    postReport
+    displayForm
 })(ExtensionComponent);
 
 export default {
@@ -34,7 +32,6 @@ export default {
     epics: {
         fetchSchemasEpic,
         displayFormEpic,
-        postReportEpic
     },
     containers: {
         Toolbar: {
