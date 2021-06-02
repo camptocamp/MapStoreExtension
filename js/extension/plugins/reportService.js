@@ -7,7 +7,7 @@ const REPORTS = "/reports";
 const SCHEMAS = "/jsonschemas";
 
 const MOCKS = {
-    [REPORTS]: mockReports,
+    [REPORTS]: mockReports.map((report) => JSON.stringify(report)),
     [SCHEMAS]: mockSchemas,
 };
 MOCKS[REPORTS + "-post"] = {};

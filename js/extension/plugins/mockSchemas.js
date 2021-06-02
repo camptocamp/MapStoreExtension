@@ -2,12 +2,14 @@ export const mockSchemas = [
     {
         "id": "12345678-1234-5678-1234-567812345678",
         "name": "model1",
-        "layer_id": "ALLOWED_LAYER",
+        "layer_id": "espub_mob:gev_ajeu",
+        "readOnly":	false,
         "JSONSchema": {
             "$schema": "http://json-schema.org/draft-07/schema#",
             "definitions": {
                 "Model1CustomFieldsSchema": {
                     "type": "object",
+                    "readOnly":	false,
                     "required": [
                         "boolean",
                         "category",
@@ -51,12 +53,14 @@ export const mockSchemas = [
                 },
                 "Model1ReportSchema": {
                     "type": "object",
+                    "readOnly":	false,
                     "required": [
                         "feature_id",
                         "report_model_id"
                     ],
                     "properties": {
                         "custom_field_values": {
+                            "title": "",
                             "type": "object",
                             "$ref": "#/definitions/Model1CustomFieldsSchema",
                             "ui:order": [
@@ -121,12 +125,14 @@ export const mockSchemas = [
     {
         "id": "12345678-1234-5678-1234-567812345679",
         "name": "model2",
-        "layer_id": "ALLOWED_LAYER",
+        "layer_id": "espub_mob:gev_jeu",
+        "readOnly":	false,
         "JSONSchema": {
             "$schema": "http://json-schema.org/draft-07/schema#",
             "definitions": {
                 "Model2CustomFieldsSchema": {
                     "type": "object",
+                    "readOnly":	false,
                     "properties": {
                         "commentaire": {
                             "title": "commentaire",
@@ -137,12 +143,14 @@ export const mockSchemas = [
                 },
                 "Model2ReportSchema": {
                     "type": "object",
+                    "readOnly":	false,
                     "required": [
                         "feature_id",
                         "report_model_id"
                     ],
                     "properties": {
                         "custom_field_values": {
+                            "title": "",
                             "type": "object",
                             "$ref": "#/definitions/Model2CustomFieldsSchema",
                             "ui:order": [

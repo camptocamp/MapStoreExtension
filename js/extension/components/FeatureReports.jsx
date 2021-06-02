@@ -26,10 +26,6 @@ class FeatureReports extends React.Component {
     constructor(props) {
         super(props);
 
-        this.postReport = this.postReport.bind(this);
-        this.updateState = this.updateState.bind(this);
-        
-
         this.state = {
             selectedSchema: defaultSchema,
             editReport: false,
@@ -65,11 +61,7 @@ class FeatureReports extends React.Component {
             .getReports(this.state.feature_id, this.state.layer_id)
             .subscribe((reports) => 
                 {
-                    let reports_parsed = reports;
-                    if (! new URLSearchParams(window.location.search).has("usemocks")) { 
-                        reports_parsed = reports.map((report) => JSON.parse(report));
-                    } 
-                    this.setState({ reports : reports_parsed })
+                    this.setState({ reports : reports.map((report) => JSON.parse(report)) })
                 }); 
     }
       
@@ -107,15 +99,12 @@ class FeatureReports extends React.Component {
         });
     }
 
-    postReport(payload) {
+    postReport(formData) {
         this.setState({ editReport: false });
 
         this.subscription = reportService
-            .postReport(payload.formData)
-            .subscribe(() => 
-                {
-                    this.getReports();
-                });
+            .postReport(formData)
+            .subscribe(() =>  this.getReports() );
     }
 
     componentWillUnmount() {
@@ -183,7 +172,7 @@ class FeatureReports extends React.Component {
                                 uiSchema={selectedSchema.UISchema}
                                 formData={selectedSchema.formData}
                                 onChange={log("changed")}
-                                onSubmit={this.postReport}
+                                onSubmit={({formData}, e) => this.postReport(formData)}
                                 onError={log("errors")}
                                 FieldTemplate={fieldTemplate}
                             />
