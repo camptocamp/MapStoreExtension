@@ -7,7 +7,7 @@ const REPORTS = "/reports";
 const SCHEMAS = "/jsonschemas";
 
 const MOCKS = {
-    [REPORTS]: mockReports.map((report) => JSON.stringify(report)),
+    [REPORTS]: mockReports,
     [SCHEMAS]: mockSchemas,
 };
 MOCKS[REPORTS + "-post"] = {};
@@ -83,13 +83,18 @@ function request(url, options) {
         ).then((response) => response.json());
     }
 
+    if (options.layerId && options.featureId) {
+        // getReports
+        fetchAPI = fetchAPI.then((reports) => reports.map((report) => JSON.parse(report)));
+    }
+
     return Rx.Observable.fromPromise(fetchAPI);
 }
 
 export const reportService = {
-    getReports: (featureId, layerId) => request(REPORTS, {getreports : true, featureId, layerId}),
+    getReports: (featureId, layerId) => request(REPORTS, {featureId, layerId}),
     getSchemas: () => request(SCHEMAS),
-    postReport: (formData) => request(REPORTS, {postreport : true, formData}),
+    postReport: (formData) => request(REPORTS, {formData}),
 };
 
 export const filterData = (report) => {

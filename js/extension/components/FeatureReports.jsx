@@ -59,10 +59,7 @@ class FeatureReports extends React.Component {
     getReports() {
         this.subscription = reportService
             .getReports(this.state.feature_id, this.state.layer_id)
-            .subscribe((reports) => 
-                {
-                    this.setState({ reports : reports.map((report) => JSON.parse(report)) })
-                }); 
+            .subscribe((reports) => this.setState({ reports }));
     }
       
 
