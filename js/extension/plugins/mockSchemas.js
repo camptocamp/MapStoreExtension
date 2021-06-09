@@ -126,7 +126,7 @@ export const mockSchemas = [
         "id": "12345678-1234-5678-1234-567812345679",
         "name": "model2",
         "layer_id": "espub_mob:gev_jeu",
-        "readOnly":	false,
+        "readOnly":	true,
         "JSONSchema": {
             "$schema": "http://json-schema.org/draft-07/schema#",
             "definitions": {

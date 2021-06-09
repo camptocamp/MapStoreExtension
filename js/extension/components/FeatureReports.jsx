@@ -172,7 +172,9 @@ class FeatureReports extends React.Component {
                                 onSubmit={({formData}, e) => this.postReport(formData)}
                                 onError={log("errors")}
                                 FieldTemplate={fieldTemplate}
-                            />
+                            >
+                                {selectedSchema.readOnly && <div></div>} 
+                            </Form>
                         )}
                     </div>
                 </Collapse>
