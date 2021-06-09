@@ -3,12 +3,12 @@ import React from "react";
 export const fieldTemplate = function (props) {
     const {
         id,
-        label,
         help,
         required,
         description,
         errors,
         children,
+        uiSchema,
         formData,
         schema,
     } = props;
@@ -19,29 +19,33 @@ export const fieldTemplate = function (props) {
         classNames += " file-upload";
     }
 
+    const display = !(uiSchema["ui:widget"] &&  uiSchema["ui:widget"]==="hidden");
+
     return (
-        <div className={classNames}>
-            <label htmlFor={id}>
-                {label}
-                {required ? "*" : null}
-            </label>
-            {fileUpload && formData && (
-                <div>
-                    <a
-                        href={formData}
-                        download={"document." + getExtension(formData)}
-                    >
-                        Document téléversé (
-                        {getExtension(formData).toUpperCase()} -{" "}
-                        {getFileSize(formData)}Kb)
-                    </a>
-                </div>
-            )}
-            {description}
-            {children}
-            {errors}
-            {help}
-        </div>
+        <div> {display &&
+            <div className={classNames}>
+                <label htmlFor={id}>
+                    {schema.title}
+                    {required ? "*" : null}
+                </label>
+                {fileUpload && formData && (
+                    <div>
+                        <a
+                            href={formData}
+                            download={"document." + getExtension(formData)}
+                        >
+                            Document téléversé (
+                            {getExtension(formData).toUpperCase()} -{" "}
+                            {getFileSize(formData)}Kb)
+                        </a>
+                    </div>
+                )}
+                {description}
+                {children}
+                {errors}
+                {help}
+            </div>
+        } </div>
     );
 };
 

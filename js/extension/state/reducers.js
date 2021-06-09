@@ -18,12 +18,6 @@ function reportExtension(state = { schemas: [{}], selectedSchema: undefined, dis
             state,
             display: !state.display
         };
-    case 'SELECT_SCHEMA':
-        return {
-            ...
-            state,
-            selectedSchema: action.payload.value
-        };
     default:
         return state;
     }
