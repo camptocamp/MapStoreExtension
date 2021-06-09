@@ -14,6 +14,7 @@ MOCKS[REPORTS + "-post"] = {};
 
 function request(url, options) {
     options = options || {};
+
     // Use mock if asked in query params
     if (new URLSearchParams(window.location.search).has("usemocks")) {
         return Rx.Observable.of(
@@ -32,41 +33,66 @@ function request(url, options) {
     let fetchAPI;
     if (process.env.NODE_ENV === "production") {
         const endpoint = `../mapstore-reports${url}`;
-        fetchAPI = options.data
-            ? axios
-                  .create({
-                      baseURL: endpoint,
-                      headers: {
-                          "Content-type": "application/json",
-                      },
-                  })
-                  .post("", options.data)
-                  .catch((error) => {
-                      console.error("Error:", error);
-                  })
-            : axios.get(endpoint);
+
+        let params = {};
+        if (options.layerId && options.featureId) {
+            params = {
+                "feature_id": options.featureId,
+                "layer_id": options.layerId,
+            };
+        }
+
+        fetchAPI = options.formData ?
+            axios
+                .create({
+                    baseURL: endpoint,
+                    headers: {
+                        "Content-type": "application/json",
+                    },
+                })
+                .post("", options.formData)
+                .catch((error) => {
+                    console.error("Error:", error);
+                })
+            : axios.get(endpoint, {params});
+
         fetchAPI = fetchAPI.then((response) => response.data);
     } else {
-        const fetchOptions = options.formData
-            ? {
-                  method: "POST", // or 'PUT',
-                  headers: {
-                      "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify(options.formData),
-              }
-            : {};
+        let fetchOptions = {};
+        let fullurl = new URL(`http://localhost:8080${url}`);
+
+        if (options.formData) {
+            fetchOptions = {
+                method: "POST", // or 'PUT',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(options.formData),
+            }
+        }
+        if (options.layerId && options.featureId) {
+            fullurl.searchParams.append("feature_id", options.featureId);
+            fullurl.searchParams.append("layer_id", options.layerId);
+            fetchOptions = {
+                method: "GET"
+            }
+        }
         fetchAPI = fetch(
-            `http://localhost:8080${url}`,
+            fullurl,
             fetchOptions
         ).then((response) => response.json());
+    }
+
+    if (options.layerId && options.featureId) {
+        // getReports
+        fetchAPI = fetchAPI.then((reports) => reports.map((report) => JSON.parse(report)));
     }
 
     return Rx.Observable.fromPromise(fetchAPI);
 }
 
 export const reportService = {
-    getReports: (featureId) => request(REPORTS),
+    getReports: (featureId, layerId) => request(REPORTS, {featureId, layerId}),
     getSchemas: () => request(SCHEMAS),
     postReport: (formData) => request(REPORTS, {formData}),
 };

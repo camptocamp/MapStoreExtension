@@ -56,15 +56,4 @@ export const displayFormEpic = (action$, store) =>
         return viewerObservable;
     });
 
-export const postReportEpic = (action$) =>
-    action$.ofType("POST_REPORT").switchMap((action) =>
-        reportService
-            .postReport(action.payload.formData)
-            .switchMap(
-                (response) =>
-                    Rx.Observable.of(loadedSchemas(Object.values(response))) // FIXME loadedSchemas looks wrong
-            )
-            .catch((e) => Rx.Observable.of(loadError(e.message)))
-    );
-
-export default { fetchSchemasEpic, displayFormEpic, postReportEpic };
+export default { fetchSchemasEpic, displayFormEpic};
