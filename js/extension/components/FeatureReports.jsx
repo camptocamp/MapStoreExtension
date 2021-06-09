@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { Button, Col, Collapse, Glyphicon, Panel, Row } from "react-bootstrap";
 import Select from "react-select";
+import { default as html2pdf } from "html2pdf.js";
 import { reportService, filterData } from "../plugins/reportService";
 import { fieldTemplate } from "../plugins/formFieldTemplate";
 
@@ -31,8 +32,10 @@ class FeatureReports extends React.Component {
             editReport: false,
             feature_id: props.feature.id,
             reports: [],
+            printing: false,
             layer_id: ""
         };
+        this.form = React.createRef();
     }
 
     componentDidMount() {
@@ -79,12 +82,12 @@ class FeatureReports extends React.Component {
         });
     }
 
-    toggleEditReport(toggled) {
-        this.setState({ editReport: toggled });
+    toggleEditReport(toggled, printing = false) {
+        this.setState({ editReport: toggled, printing });
     }
 
-    showReport(report) {
-        this.setState({
+    stateForReport(report) {
+        return {
             editReport: true,
             feature_id: report.feature_id,
             selectedSchema: {
@@ -93,7 +96,31 @@ class FeatureReports extends React.Component {
                 )[0],
                 formData: filterData(report),
             },
-        });
+        };
+    }
+
+    showReport(report) {
+        this.setState(this.stateForReport(report));
+    }
+
+    printReport(report) {
+        const suffix = new Date().toLocaleDateString().replaceAll("/", "-");
+        const options = {
+            margin: 5,
+            filename: `drealcorse_rapport_${suffix}.pdf`,
+        };
+        this.setState(
+            {
+                ...this.stateForReport(report),
+                printing: true,
+            },
+            () =>
+                html2pdf()
+                    .set(options)
+                    .from(this.form.current)
+                    .save()
+                    .then(() => this.toggleEditReport(false, false))
+        );
     }
 
     postReport(formData) {
@@ -163,19 +190,27 @@ class FeatureReports extends React.Component {
                                 value={this.schemaOption(selectedSchema)}
                             />
                         </div>
-                        {selectedSchema && (
-                            <Form
-                                schema={selectedSchema.JSONSchema}
-                                uiSchema={selectedSchema.UISchema}
-                                formData={selectedSchema.formData}
-                                onChange={log("changed")}
-                                onSubmit={({formData}, e) => this.postReport(formData)}
-                                onError={log("errors")}
-                                FieldTemplate={fieldTemplate}
-                            >
-                                {selectedSchema.readOnly && <div></div>} 
-                            </Form>
-                        )}
+                        <div
+                            class="report-form"
+                            ref={this.form}
+                            className={
+                                this.state.printing ? "report-print" : ""
+                            }
+                        >
+                            {selectedSchema && (
+                                <Form
+                                    schema={selectedSchema.JSONSchema}
+                                    uiSchema={selectedSchema.UISchema}
+                                    formData={selectedSchema.formData}
+                                    onChange={log("changed")}
+                                    onSubmit={({formData}, e) => this.postReport(formData)}
+                                    onError={log("errors")}
+                                    FieldTemplate={fieldTemplate}
+                                >
+                                  {selectedSchema.readOnly && <div></div>} 
+                                </Form>
+                            )}
+                        </div>
                     </div>
                 </Collapse>
                 {Object.keys(reportsByModel).map((report) => [
@@ -204,6 +239,12 @@ class FeatureReports extends React.Component {
             <li key={r.id}>
                 <button class="btn btn-link" onClick={() => this.showReport(r)}>
                     {this.formatDate(r.created_at)}
+                </button>
+                <button
+                    class="btn btn-link"
+                    onClick={() => this.printReport(r)}
+                >
+                    PDF
                 </button>
             </li>
         ));
