@@ -33,9 +33,39 @@ class FeatureReports extends React.Component {
             feature_id: props.feature.id,
             reports: [],
             printing: false,
+            layer_id: ""
         };
         this.form = React.createRef();
     }
+
+    componentDidMount() {
+        this.updateState();
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props.feature.id !== prevProps.feature.id) {
+            this.updateState();
+        }
+        if (this.state.layer_id !== prevState.layer_id) {
+            this.getReports();
+        }
+    } 
+      
+    updateState() {
+        const layer_id = (this.props.schemasByLayers && this.props.schemasByLayers.length != 0 && this.props.schemasByLayers[0].layer_id) ?
+            this.props.schemasByLayers[0].layer_id:
+            undefined;
+
+        this.setState({feature_id: this.props.feature.id, layer_id : layer_id}); 
+    }
+
+    getReports() {
+        this.subscription = reportService
+            .getReports(this.state.feature_id, this.state.layer_id)
+            .subscribe((reports) => this.setState({ reports }));
+    }
+      
+
 
     schemaOption(schema) {
         return { label: schema.name, value: schema };
@@ -93,10 +123,12 @@ class FeatureReports extends React.Component {
         );
     }
 
-    componentDidMount() {
+    postReport(formData) {
+        this.setState({ editReport: false });
+
         this.subscription = reportService
-            .getReports(this.props.feature.id)
-            .subscribe((reports) => this.setState({ reports }));
+            .postReport(formData)
+            .subscribe(() =>  this.getReports() );
     }
 
     componentWillUnmount() {
@@ -174,7 +206,9 @@ class FeatureReports extends React.Component {
                                     onSubmit={this.props.postReport}
                                     onError={log("errors")}
                                     FieldTemplate={fieldTemplate}
-                                />
+                                >
+                                  {selectedSchema.readOnly && <div></div>} 
+                                </Form>
                             )}
                         </div>
                     </div>
