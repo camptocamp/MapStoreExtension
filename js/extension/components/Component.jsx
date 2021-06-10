@@ -13,7 +13,7 @@ const Extension = ({ display, schemasByLayers, currentFeatures, fetchSchemas, po
         <div id="report-extension">
             {currentFeatures &&
             currentFeatures.map(feature => {
-                return <FeatureReports feature={feature} schemasByLayers={schemasByLayers} postReport={postReport} />;
+                return <FeatureReports key={feature.id} feature={feature} schemasByLayers={schemasByLayers} postReport={postReport} />;
             })
             }
         </div>}

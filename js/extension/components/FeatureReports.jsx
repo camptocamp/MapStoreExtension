@@ -1,4 +1,4 @@
-import InfoButton from "@mapstore/components/buttons/InfoButton";
+import FeatureInfoButton from "./FeatureInfoButton";
 import Form from "@rjsf/core";
 import PropTypes from "prop-types";
 import React from "react";
@@ -157,7 +157,8 @@ class FeatureReports extends React.Component {
                 <Row>
                     <Col sm={10}>{feature_id}</Col>
                     <Col sm={1}>
-                        <InfoButton
+                        <FeatureInfoButton
+                            id={"infobutton_" + feature_id}
                             glyphicon="info-sign"
                             text=""
                             title={"Feature " + feature_id}
