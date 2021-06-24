@@ -235,7 +235,6 @@ class FeatureReports extends React.Component {
     }
 
     renderReportsList(reports) {
-        console.log(reports);
         return reports.map((r) => (
             <li key={r.id}>
                 <button class="btn btn-link" onClick={() => this.showReport(r)}>
