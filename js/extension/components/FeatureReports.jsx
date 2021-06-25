@@ -16,11 +16,13 @@ const defaultSchema = {
     JSONSchema: {},
     UISchema: {},
     formData: { feature_id: "" },
+    creationInfos: {}
 };
 
 class FeatureReports extends React.Component {
     static propTypes = {
         feature: PropTypes.object,
+        layers: PropTypes.object,
         schemasByLayers: PropTypes.object,
     };
 
@@ -33,7 +35,8 @@ class FeatureReports extends React.Component {
             feature_id: props.feature.id,
             reports: [],
             printing: false,
-            layer_id: ""
+            layer_id: "",
+            creationInfos: {}
         };
         this.form = React.createRef();
     }
@@ -94,8 +97,9 @@ class FeatureReports extends React.Component {
                 ...this.props.schemasByLayers.filter(
                     (s) => s.id === report.report_model_id
                 )[0],
-                formData: filterData(report),
+                formData: filterData(report).result,
             },
+            creationInfos: filterData(report).creationInfos
         };
     }
 
@@ -107,6 +111,13 @@ class FeatureReports extends React.Component {
         const suffix = new Date().toLocaleDateString().replaceAll("/", "-");
         const options = {
             margin: 5,
+            image: {type: 'jpeg', quality: 0.95},
+            html2canvas: {
+                dpi: 192,
+                scale:4,
+                letterRendering: true,
+                useCORS: true
+            },
             filename: `drealcorse_rapport_${suffix}.pdf`,
         };
         this.setState(
@@ -136,8 +147,14 @@ class FeatureReports extends React.Component {
     }
 
     render() {
-        const { selectedSchema, editReport, reports } = this.state;
+        const { selectedSchema, editReport, reports, creationInfos } = this.state;
         const feature_id = this.props.feature.id;
+
+        const layer = this.props.layers.find(
+            (l) => l.name === selectedSchema.layer_id
+        );
+
+        const layer_title = layer ? layer.title : selectedSchema.layer_id;
 
         const reportsByModel = this.props.schemasByLayers.reduce(
             (map, schema) => {
@@ -198,6 +215,16 @@ class FeatureReports extends React.Component {
                                 this.state.printing ? "report-print" : ""
                             }
                         >
+                            {
+                                this.state.printing &&
+                                <div>
+                                    <h4><b>Type de rapport :</b> {selectedSchema.title} </h4>
+                                    <h4><b>Couche :</b> {layer_title} </h4>
+                                    <h4><b>Objet :</b> {feature_id} </h4>
+                                    <h4><b>Création :</b> le {this.formatDate(creationInfos.created_at)} par {creationInfos.created_by}</h4>
+                                    <h4><b>Dernière modification :</b> le {this.formatDate(creationInfos.updated_at)} par {creationInfos.updated_by}</h4>
+                                </div>
+                            }
                             {selectedSchema && (
                                 <Form
                                     schema={selectedSchema.JSONSchema}
