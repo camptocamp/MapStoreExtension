@@ -1,49 +1,53 @@
 import {connect} from "react-redux";
 import { name } from '../../../config';
+import React from "react";
+import { Glyphicon } from 'react-bootstrap';
 
 import ExtensionComponent from "../components/Component";
-import Rx from "rxjs";
-import { changeZoomLevel } from "@mapstore/actions/map";
-
+import { fetchSchemas, loadedSchemas, loadError, displayForm } from "../state/actions";
+import reportExtension from "../state/reducers";
+import {fetchSchemasEpic, displayFormEpic} from '../state/epics';
+import { schemasByLayersSelector } from "../state/selectors";
+import { currentFeatureSelector } from '@mapstore/selectors/mapInfo';
 import '../assets/style.css';
+
+
+export const ReportIdentifyViewer = connect(state => ({
+    schemas: state.reportExtension && state.reportExtension.schemas,
+    display: state.reportExtension && state.reportExtension.display,
+    schemasByLayers: schemasByLayersSelector(state),
+    selectedSchema: state.reportExtension && state.reportExtension.selectedSchema,
+    currentFeatures: currentFeatureSelector(state)
+}), {
+    fetchSchemas,
+    loadedSchemas,
+    loadError,
+    displayForm
+})(ExtensionComponent);
+
 export default {
     name,
-    component: connect(state => ({
-        value: state.sampleExtension && state.sampleExtension.value
-    }), {
-        onIncrease: () => {
-            return {
-                type: 'INCREASE_COUNTER'
-            };
-        }, changeZoomLevel
-    })(ExtensionComponent),
-    reducers: {
-        sampleExtension: (state = { value: 1 }, action) => {
-            if (action.type === 'INCREASE_COUNTER') {
-                return { value: state.value + 1 };
-            }
-            return state;
-        }
-    },
+    component: ReportIdentifyViewer,
+    reducers: {reportExtension},
     epics: {
-        logCounterValue: (action$, store) => action$.ofType('INCREASE_COUNTER').switchMap(() => {
-            /* eslint-disable */
-            console.log('CURRENT VALUE: ' + store.getState().sampleExtension.value);
-            /* eslint-enable */
-            return Rx.Observable.empty();
-        })
+        fetchSchemasEpic,
+        displayFormEpic,
     },
     containers: {
         Toolbar: {
-            name: "sampleExtension",
+            name: "reportExtension",
             position: 10,
-            text: "INC",
+            icon: <Glyphicon glyph="list-alt" />,
             doNotHide: true,
             action: () => {
                 return {
-                    type: 'INCREASE_COUNTER'
+                    type: 'DISPLAY_FORM'
                 };
             },
+            selector: (state) => ({
+                bsStyle: state.reportExtension && state.reportExtension.display ? "success" : "primary",
+                active: !!(state.reportExtension && state.reportExtension.display)
+            }),
             priority: 1
         }
     }
