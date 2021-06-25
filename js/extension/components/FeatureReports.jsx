@@ -145,7 +145,7 @@ class FeatureReports extends React.Component {
                     (r) => r.report_model_id === schema.id
                 );
                 if (filtered.length > 0) {
-                    map[schema.name] = filtered;
+                    map[schema.title] = filtered;
                 }
                 return map;
             },
@@ -240,6 +240,7 @@ class FeatureReports extends React.Component {
             <li key={r.id}>
                 <button class="btn btn-link" onClick={() => this.showReport(r)}>
                     {this.formatDate(r.created_at)}
+                        {r.created_by}
                 </button>
                 <button
                     class="btn btn-link"
