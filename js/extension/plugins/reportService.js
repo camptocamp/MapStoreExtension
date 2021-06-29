@@ -100,5 +100,7 @@ export const reportService = {
 export const filterData = (report) => {
     const { created_at, updated_at, created_by, updated_by, ...result } =
         report;
-    return result;
+    return { creationInfos :  { created_at, updated_at, created_by, updated_by },
+             result
+            };
 };

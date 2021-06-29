@@ -9,12 +9,14 @@ import reportExtension from "../state/reducers";
 import {fetchSchemasEpic, displayFormEpic} from '../state/epics';
 import { schemasByLayersSelector } from "../state/selectors";
 import { currentFeatureSelector } from '@mapstore/selectors/mapInfo';
+import { layersSelector } from "@mapstore/selectors/layers";
 import '../assets/style.css';
 
 
 export const ReportIdentifyViewer = connect(state => ({
     schemas: state.reportExtension && state.reportExtension.schemas,
     display: state.reportExtension && state.reportExtension.display,
+    layers: layersSelector(state),
     schemasByLayers: schemasByLayersSelector(state),
     selectedSchema: state.reportExtension && state.reportExtension.selectedSchema,
     currentFeatures: currentFeatureSelector(state)
