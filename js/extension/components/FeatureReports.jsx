@@ -266,8 +266,8 @@ class FeatureReports extends React.Component {
         return reports.map((r) => (
             <li key={r.id}>
                 <button class="btn btn-link" onClick={() => this.showReport(r)}>
-                    {this.formatDate(r.created_at)}
-                        {r.created_by}
+                    {this.formatDate(r.created_at)}{' '}
+                    {r.created_by}
                 </button>
                 <button
                     class="btn btn-link"
