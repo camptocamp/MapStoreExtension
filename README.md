@@ -69,7 +69,11 @@ If present with `"extension":false` :
 If absent :
 - the extension will be present in the default context and not available for any other contexts.
 
+## Important warning
 
+As state-of-the-art MapStore doesn't enable extensions to register a viewer as a CustomViewer, we tweaked it with [this commit](https://github.com/camptocamp/MapStore2/commit/fcdea4f0eab87942a70a17b8eb8933d2a04584d1).
+
+As Mapstore is a submodule of both MapStoreExtension and mapstore2-georchestra, we had to create a custom image for mapstore2-georchestra, and the extension as to be built with that modification.
 
 
 
