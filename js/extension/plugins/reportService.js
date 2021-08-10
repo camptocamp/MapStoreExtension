@@ -23,7 +23,7 @@ function request(url, options) {
     }
 
     const httpReportsProd = axios.create({
-        baseURL: "../mapstore-reports/reports",
+        baseURL: "../featurereports/reports",
         headers: {
             "Content-type": "application/json",
         },
@@ -32,7 +32,7 @@ function request(url, options) {
     // use axios in prod, fetch in dev
     let fetchAPI;
     if (process.env.NODE_ENV === "production") {
-        const endpoint = `../mapstore-reports${url}`;
+        const endpoint = `../featurereports${url}`;
 
         let params = {};
         if (options.layerId && options.featureId) {
