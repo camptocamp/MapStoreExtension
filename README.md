@@ -78,5 +78,10 @@ As Mapstore is a submodule of both MapStoreExtension and mapstore2-georchestra, 
 That needs to be kept in mind while updating the project.
 
 
+## Run extension in dev mode against data in local featurereports-backend composition
 
+```
+sed -i "s/dev.mapstore.geo-solutions.it/georchestra.mydomain.org/g" MapStore2/build/buildConfig.js
+```
 
+Open: http://localhost:8081/#/viewer/openlayers/0
