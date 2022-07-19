@@ -1,7 +1,7 @@
 {
-    "name": "MapStoreExtension",
-    "version": "1.0.0",
-    "description": "Template project to create MapStore extensions",
+    "name": "ReportExtension",
+    "version": "1.1.0",
+    "description": "MapStore extension to handle feature reports",
     "main": "index.js",
     "eslintConfig": {
         "extends": [
